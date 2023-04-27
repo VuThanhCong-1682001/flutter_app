@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:social_app/Models/UserLogin.dart';
+import 'package:social_app/Models/userLogin.dart';
 import 'package:social_app/Views/BottomNavbar.dart';
 
 import 'LoginScreen.dart';
@@ -19,11 +19,21 @@ class RootScreen extends StatefulWidget {
 class RootScreenState extends State<RootScreen> {
   AuthStatus authStatus = AuthStatus.notSignedIn;
 
+  void _updateAuthStatus(AuthStatus status) {
+    setState(() {
+      authStatus = status;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     switch (authStatus) {
       case AuthStatus.notSignedIn:
-        return LoginScreen();
+        return LoginScreen(
+          onSignedIn: () {
+            _updateAuthStatus(AuthStatus.signedIn);
+          },
+        );
       case AuthStatus.signedIn:
         return BottomNavbar();
     }
