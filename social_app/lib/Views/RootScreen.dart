@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:social_app/Models/userLogin.dart';
 import 'package:social_app/Views/BottomNavbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Models/user.dart';
+import '../Utils/global.dart';
 import 'LoginScreen.dart';
 
 enum AuthStatus {
@@ -18,6 +23,34 @@ class RootScreen extends StatefulWidget {
 
 class RootScreenState extends State<RootScreen> {
   AuthStatus authStatus = AuthStatus.notSignedIn;
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  @override
+  void initState() {
+    // listen stream
+    Global.myStream!.counterStream.listen((event) {
+      if(event){//print(event);
+        _updateAuthStatus(AuthStatus.notSignedIn);
+      }
+    });
+
+    //read from local storages
+    final user = _prefs.then((SharedPreferences prefs) {
+      var json = prefs.getString('user');
+      if(json == null){
+        _updateAuthStatus(AuthStatus.notSignedIn);
+        return null;
+      }
+      Map<String, dynamic> userJson = jsonDecode(json);
+      final tempUser = User.fromJson(userJson);
+      Global.user = tempUser;
+      //call to native android
+
+      _updateAuthStatus(AuthStatus.signedIn);
+      return tempUser;
+    });
+    super.initState();
+  }
 
   void _updateAuthStatus(AuthStatus status) {
     setState(() {

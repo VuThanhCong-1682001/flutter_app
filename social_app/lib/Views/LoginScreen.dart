@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:social_app/Models/userLogin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Models/userResponse.dart';
 import '../Services/AuthASP.dart';
@@ -27,7 +28,7 @@ class LoginScreenState extends State<LoginScreen> {
   final UserLogin _user = UserLogin(userName: '', password: '');
   String title = 'Login';
   bool loading = false;
-  // final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   bool validateAndSave() {
     final form = formKey.currentState;
@@ -49,11 +50,11 @@ class LoginScreenState extends State<LoginScreen> {
           Global.user = resp.user;
           widget.onSignedIn();
           //save local storages
-          // final SharedPreferences prefs = await _prefs;
-          // final json = jsonEncode(resp.user!.toJson());
-          // final _counter = prefs.setString('user', json).then((bool success) {
-          //   return 0;
-          // });
+          final SharedPreferences prefs = await _prefs;
+          final json = jsonEncode(resp.user!.toJson());
+          final _counter = prefs.setString('user', json).then((bool success) {
+            return 0;
+          });
           Fluttertoast.showToast(
               msg: "Login success!",
               toastLength: Toast.LENGTH_SHORT,

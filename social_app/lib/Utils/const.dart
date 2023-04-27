@@ -11,5 +11,5 @@ List pages = [
 ];
 
 //IP-PC: 192.168.1.119 run on real device
-const serverName = "localhost"; //10.0.2.2 for mobile or localhost for desktop app
+const serverName = "192.168.0.6"; //10.0.2.2 for mobile or localhost for desktop app
 const urlBase = "http://$serverName:5291";

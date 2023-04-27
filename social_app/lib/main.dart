@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/Utils/global.dart';
 import 'package:social_app/Views/RootScreen.dart';
 
+import 'Stream/myStream.dart';
+
 void main() {
+  Global.myStream = MyStream();
   runApp(const MyApp());
 }
 
