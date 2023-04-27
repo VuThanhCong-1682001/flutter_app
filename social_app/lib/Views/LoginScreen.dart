@@ -1,9 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:social_app/Models/UserLogin.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:social_app/Models/userLogin.dart';
+
+import '../Models/userResponse.dart';
+import '../Services/AuthASP.dart';
+import '../Utils/global.dart';
 
 enum FormType { login, register}
 
 class LoginScreen extends StatefulWidget {
+  final VoidCallback onSignedIn;
+  LoginScreen({Key? key, required this.onSignedIn}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return LoginScreenState();
@@ -34,7 +44,31 @@ class LoginScreenState extends State<LoginScreen> {
         setState(() {
           loading = true;
         });
-
+        UserResponse resp = await AuthASP().signIn(_user.userName, _user.password);
+        if (resp.error == '200') {
+          Global.user = resp.user;
+          widget.onSignedIn();
+          //save local storages
+          // final SharedPreferences prefs = await _prefs;
+          // final json = jsonEncode(resp.user!.toJson());
+          // final _counter = prefs.setString('user', json).then((bool success) {
+          //   return 0;
+          // });
+          Fluttertoast.showToast(
+              msg: "Login success!",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+        } else {
+          setState(() {
+            _authHint = resp.error!;
+            loading = false;
+          });
+        }
       } else {
         /*UserResponse resp = await widget.auth.register(_user);
         if (resp.error == '200') {
@@ -174,7 +208,8 @@ class LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: usernameAndPassword() + submitWidgets(),
             ),
-          )
+          ),
+          Text(_authHint, style: TextStyle(fontSize: 25),)
         ],
       ),
     );
