@@ -1,8 +1,8 @@
 import '../Models/user.dart';
-// import '../stream/myStream.dart';
+import '../Stream/myStream.dart';
 
 class Global{
-  // static MyStream? myStream;
+  static MyStream? myStream;
   static User? user;//current user of app after login
 
   static void clearData(){
